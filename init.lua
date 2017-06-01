@@ -17,7 +17,6 @@ minetest.register_node('computerworks:farming', {
     titles = {'picture.png'},
     group = {snappy=1, oddly_breakable_by_hand=2},
 
-
     on_construct = function(pos)
 	local meta = minetest.get_meta(pos)
 	meta:set_string("formspec", computer_formspec)
@@ -39,10 +38,21 @@ minetest.register_node('computerworks:farming', {
                          "label[1,1; This is shown on right click]"..
                          "field[1,2;2,1;x;x;]")
 
+    end,
+
+    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+    if player then
+	minetest.chat_send_player(player:get_player_name(),
+	"You're not allowed to put things in treasure chests!")
+	    return 0
+        end
+
+    end,
+
+    on_metadata_inventory_put = function(pos, listname, index, stack, player)
+	minetest.log("action", player:get_player_name() ..
+         	" moves stuff to chest at " .. minetest.pos_to_string(pos))
     end
-
-
-         
 
 })
 
@@ -59,12 +69,19 @@ minetest.register_craft({
     recipe = {
          {'default:dirt', 'default:dirt',},
          {'default:dirt', 'default:dirt',},
-         },
- 
-
+         }, 
 })
 
 
+minetest.on_metadata_inventory_put = function(pos, listname, index, stack, player)
+    minetest.chat_send_player(player:get_player_name(), "yooo")
+end
 
-
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+    minetest.chat_send_player("singleplayer", "yooo")
+    if fields.name then
+        print("hello")
+    	minetest.chat_send_player(player:get_player_name(), "yooo")
+    end
+end)
 
